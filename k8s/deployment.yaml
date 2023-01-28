@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metaData:
+  name: postgre
+spec:
+  selector:
+    matchLabels:
+      app: postgre
+    template:
+      metadata:
+        labels:
+          app: postgre
+      spec:
+        containers:
+          - name: postgre
+            image: postgres:15.1
+            ports:
+            - containerPort: 5432
+            env:
+            - name: POSTGRES_DB
+              value: "banco1"
+            - name: POSTGRES_USER
+              value: "usuario"
+            - name: POSTGRES_PASSWORD
+              value: "senha"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgre
+spec:
+  selector:
+    app: postgre
+  ports:
+    - port: 5432
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metaData:
+  name: web
+spec:
+  selector:
+    matchLabels:
+      app: web
+    template:
+      metadata:
+        labels:
+          app: web
+      spec:
+        containers:
+          - name: web
+            image: elizeurjr/kubenews:1.0
+            ports:
+            - containerPort: 8000
+            env:
+            - name: DB_DATABASE
+              value: "banco1"
+            - name: DB_USERNAME
+              value: "usuario"
+            - name: DB_PASSWORD
+              value: "senha"
+            - name: DB_HOST
+              value: "postgre"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 80
+      targetPort: 8000
+      NodePort: 30000
+  type: NodePort
