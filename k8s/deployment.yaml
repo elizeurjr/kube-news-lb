@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+apiVersion: v1
 kind: Deployment
 metaData:
   name: postgre
@@ -37,7 +37,7 @@ spec:
 
 ---
 
-apiVersion: apps/v1
+apiVersion: v1
 kind: Deployment
 metaData:
   name: web
@@ -52,7 +52,7 @@ spec:
       spec:
         containers:
           - name: web
-            image: elizeurjr/kubenews:1.0
+            image: elizeurjr/kubenews:{{TAG}}
             ports:
             - containerPort: 8000
             env:
